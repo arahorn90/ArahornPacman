@@ -5,8 +5,6 @@ import java.util.Arrays;
 
 import ua.arahorn.arahornspacman.GameActivity;
 
-import android.util.Log;
-
 public class PathFinder {
 
 	public class Point {
@@ -45,37 +43,17 @@ public class PathFinder {
 		}
 	};
 
-	int[][] fillmap ;//= new int[20][20];
-	
-	ArrayList<Point> path = new ArrayList<Point>();
-	
-	int[][] labyrinth; //= { 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-//							{ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 2, 2, 2, 0 },
-//							{ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 2, 0 },
-//							{ 0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 2, 2, 2, 2, 0 },
-//							{ 0, 2, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0 },
-//							{ 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 2, 2, 2, 2, 0 },
-//							{ 0, 2, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0 },
-//							{ 0, 2, 2, 2, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0 },
-//							{ 0, 2, 2, 2, 2, 0, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 0, 0, 2, 0, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 2, 0 },
-//							{ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0 },
-//							{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+	int[][] fillmap;
 
+	ArrayList<Point> path = new ArrayList<Point>();
+
+	int[][] labyrinth; 
 	ArrayList<Point> buf = new ArrayList<Point>();
 
 	public PathFinder(int[][] labyrinth) {
 
-		 this.labyrinth = labyrinth;
-		 fillmap = new int[GameActivity.mapHeight][GameActivity.mapWidth];
+		this.labyrinth = labyrinth;
+		fillmap = new int[GameActivity.mapHeight][GameActivity.mapWidth];
 
 	}
 
@@ -120,7 +98,6 @@ public class PathFinder {
 			System.err.println("not found path");
 			return null;
 		}
-//		Log.e("", "Path " + String.valueOf(start.x) + " " + String.valueOf(start.y) + " " + String.valueOf(end.x) + " " + String.valueOf(end.y));
 		path.clear();
 		path.add(end);
 		int x = end.getX();
@@ -163,5 +140,3 @@ public class PathFinder {
 		return result;
 	}
 }
-
-

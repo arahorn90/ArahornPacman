@@ -7,30 +7,26 @@ import ua.arahorn.arahornspacman.utils.Constants;
 import ua.arahorn.arahornspacman.utils.PathFinder;
 import ua.arahorn.arahornspacman.utils.PathFinder.Point;
 
-public class RedAlien extends BaseElement{
-	
+public class RedAlien extends BaseElement {
+
 	public enum RedAlienRotation {
-		RIGHT,
-		LEFT,
-		TOP,
-		BOTTOM
+		RIGHT, LEFT, TOP, BOTTOM
 	}
-	
+
 	public enum RedAlienMove {
-		MOVE,
-		STOP
+		MOVE, STOP
 	}
-	
+
 	private long startTime = 0;
 	private RedAlienRotation rotation = RedAlienRotation.LEFT;
 	private RedAlienMove move = RedAlienMove.STOP;
 	private int width;
 	private int height;
-	
-	public int [] redAlienPosition;
-	public int [] redAlienSurfaceCoordinate = {0, 0};
 
-	public RedAlien(int [] mTexture, int elementSize, int sizeInSurface, long startTime, int width, int height) {
+	public int[] redAlienPosition;
+	public int[] redAlienSurfaceCoordinate = { 0, 0 };
+
+	public RedAlien(int[] mTexture, int elementSize, int sizeInSurface, long startTime, int width, int height) {
 		super(mTexture, mTexture[Constants.TEXTURE_NUMBER_MAIN_ATLAS], elementSize, sizeInSurface);
 		this.startTime = startTime;
 		this.width = width;
@@ -40,31 +36,32 @@ public class RedAlien extends BaseElement{
 	public void draw(GL10 gl, int numberInAtlas) {
 		long time = (System.currentTimeMillis() - startTime) % 1000;
 		int n = 0;
-		if(time >= 0 && time <= 125)
+		if (time >= 0 && time <= 125)
 			n = 0;
-		else if(time > 125 && time <= 250)
+		else if (time > 125 && time <= 250)
 			n = 1;
-		else if(time > 250 && time <= 375)
+		else if (time > 250 && time <= 375)
 			n = 2;
-		else if(time > 375 && time <= 500)
+		else if (time > 375 && time <= 500)
 			n = 3;
-		else if(time > 500 && time <= 625)
+		else if (time > 500 && time <= 625)
 			n = 4;
-		else if(time > 625 && time <= 750)
+		else if (time > 625 && time <= 750)
 			n = 5;
-		else if(time > 750 && time <= 875)
+		else if (time > 750 && time <= 875)
 			n = 6;
-		else if(time > 875 && time <= 1000)
+		else if (time > 875 && time <= 1000)
 			n = 7;
-		super.draw(gl, redAlienSurfaceCoordinate[1], redAlienSurfaceCoordinate[0] - sizeInSurface, numberInAtlas + n, Constants.ROTATION_0);
+		super.draw(gl, redAlienSurfaceCoordinate[1], redAlienSurfaceCoordinate[0] - sizeInSurface, numberInAtlas + n,
+				Constants.ROTATION_0);
 	}
-	
-	public void updateRedAlien(int pacmanPositionX, int pacmanPostionY){
+
+	public void updateRedAlien(int pacmanPositionX, int pacmanPostionY) {
 		int startX = sizeInSurface * redAlienPosition[1];
 		int startY = height - sizeInSurface * redAlienPosition[0];
 
 		calcRedAlienMove(pacmanPositionX, pacmanPostionY);
-		
+
 		switch (getMove()) {
 		case MOVE:
 			redAlienMove(startX, startY);
@@ -76,8 +73,8 @@ public class RedAlien extends BaseElement{
 			break;
 		}
 	}
-	
-	private void redAlienMove(int startX, int startY){
+
+	private void redAlienMove(int startX, int startY) {
 		boolean nextSquareMove = true;
 		switch (getRotation()) {
 		case LEFT:
@@ -135,8 +132,8 @@ public class RedAlien extends BaseElement{
 		}
 
 	}
-	
-	private void redAlienStop(int startX, int startY){
+
+	private void redAlienStop(int startX, int startY) {
 		switch (getRotation()) {
 		case LEFT:
 			if (redAlienSurfaceCoordinate[1] > startX) {
@@ -179,40 +176,40 @@ public class RedAlien extends BaseElement{
 			break;
 		}
 	}
-	
+
 	private void calcRedAlienMove(int pacmanPositionX, int pacmanPostionY) {
-			if (isMovingRedAlien()) {
-				return;
-			}
-			PathFinder pathFinder = new PathFinder(GameActivity.maskOfMapFile);
+		if (isMovingRedAlien()) {
+			return;
+		}
+		PathFinder pathFinder = new PathFinder(GameActivity.maskOfMapFile);
 
-			Point start = pathFinder.new Point(redAlienPosition[1], redAlienPosition[0]);
+		Point start = pathFinder.new Point(redAlienPosition[1], redAlienPosition[0]);
 
-			Point end = pathFinder.new Point(pacmanPositionX, pacmanPostionY);
+		Point end = pathFinder.new Point(pacmanPositionX, pacmanPostionY);
 
-			Point[] path = pathFinder.find(start, end);
-			if (path.length > 1) {
-				if (path[1].getX() != path[0].getX()) {
-					if (path[1].getX() > path[0].getX()) {
-						setRotation(RedAlienRotation.RIGHT);
-						setMove(RedAlienMove.MOVE);
-					} else {
-						setRotation(RedAlienRotation.LEFT);
-						setMove(RedAlienMove.MOVE);
-					}
+		Point[] path = pathFinder.find(start, end);
+		if (path.length > 1) {
+			if (path[1].getX() != path[0].getX()) {
+				if (path[1].getX() > path[0].getX()) {
+					setRotation(RedAlienRotation.RIGHT);
+					setMove(RedAlienMove.MOVE);
 				} else {
-					if (path[1].getY() > path[0].getY()) {
-						setRotation(RedAlienRotation.BOTTOM);
-						setMove(RedAlienMove.MOVE);
-					} else {
-						setRotation(RedAlienRotation.TOP);
-						setMove(RedAlienMove.MOVE);
-					}
-
+					setRotation(RedAlienRotation.LEFT);
+					setMove(RedAlienMove.MOVE);
 				}
+			} else {
+				if (path[1].getY() > path[0].getY()) {
+					setRotation(RedAlienRotation.BOTTOM);
+					setMove(RedAlienMove.MOVE);
+				} else {
+					setRotation(RedAlienRotation.TOP);
+					setMove(RedAlienMove.MOVE);
+				}
+
 			}
 		}
-	
+	}
+
 	public boolean isMovingRedAlien() {
 		int startX = sizeInSurface * redAlienPosition[1];
 		int startY = height - sizeInSurface * redAlienPosition[0];
@@ -241,28 +238,27 @@ public class RedAlien extends BaseElement{
 				return true;
 			}
 			break;
-			
+
 		default:
 			break;
 		}
 		return false;
 	}
+
 	public void setRotation(RedAlienRotation rotation) {
 		this.rotation = rotation;
 	}
-	
+
 	public RedAlienRotation getRotation() {
 		return rotation;
 	}
-	
+
 	public void setMove(RedAlienMove move) {
 		this.move = move;
 	}
-	
+
 	public RedAlienMove getMove() {
 		return move;
 	}
-	
-	
-	
+
 }
