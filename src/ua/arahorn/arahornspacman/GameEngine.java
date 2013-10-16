@@ -20,6 +20,7 @@ public class GameEngine {
 	private PacmanControl pacmanControl;
 	private RedAlien redAlien;
 	private int elementSizeOnSurface;
+	private int smallTextSizeOnSurface;
 	private int width;
 	private int height;
 	private Activity activity;
@@ -38,21 +39,33 @@ public class GameEngine {
 				pacmanElement.updatePacman(pacmanControl.getX(), pacmanControl.getY());
 			if (redAlien != null)
 				redAlien.updateRedAlien(pacmanElement.getPacmanPosition()[1], pacmanElement.getPacmanPosition()[0]);
+			if (pacmanElement != null && redAlien != null) {
+				if ((pacmanElement.getPacmanSurfaceCoordinate()[1] < redAlien.getRedAlienSurfaceCoordinate()[1] + elementSizeOnSurface * 2 / 3
+						&& pacmanElement.getPacmanSurfaceCoordinate()[1] > redAlien.getRedAlienSurfaceCoordinate()[1] - elementSizeOnSurface * 2 / 3)
+						&& (pacmanElement.getPacmanSurfaceCoordinate()[0] < redAlien.getRedAlienSurfaceCoordinate()[0] + elementSizeOnSurface * 2 / 3
+								&& pacmanElement.getPacmanSurfaceCoordinate()[0] > redAlien.getRedAlienSurfaceCoordinate()[0] - elementSizeOnSurface * 2 / 3)) {
+					GameActivity.gameState = GameState.MENU_SCREEN;
+				}
+			}
 		}
 
 	}
 
 	public void checkContains(float x, float y) {
 		if(GameActivity.gameState.equals(GameState.MENU_SCREEN)) {
-			if(x > width / 2 - elementSizeOnSurface*3 && y < height / 2 
-					&& x < width / 2 + elementSizeOnSurface*3 && y > height / 2 - elementSizeOnSurface) {
+			if(x > width / 2 - smallTextSizeOnSurface*3 && y < height / 2 
+					&& x < width / 2 + smallTextSizeOnSurface*3 && y > height / 2 - smallTextSizeOnSurface) {
 				GameActivity.gameState = GameState.FIRST_SCREEN;
 				return;
-			}else if(x > width / 2 - elementSizeOnSurface*2 && y < height / 2 + elementSizeOnSurface
-					&& x < width / 2 + elementSizeOnSurface*2 && y > height / 2) {
-				activity.finish();
+			}else if(x > width / 2 - smallTextSizeOnSurface*4 && y < height / 2 + smallTextSizeOnSurface
+					&& x < width / 2 + smallTextSizeOnSurface*4 && y > height / 2) {
+				((GameActivity) activity).refreshGame();
 				return;
-			}
+			} else if(x > width / 2 - smallTextSizeOnSurface*2 && y < height / 2 + smallTextSizeOnSurface * 2
+				&& x < width / 2 + smallTextSizeOnSurface*2 && y > height / 2 + smallTextSizeOnSurface) {
+			activity.finish();
+			return;
+		}
 		}
 		if(GameActivity.gameState.equals(GameState.FIRST_SCREEN)) {
 			if(x > width - elementSizeOnSurface*5 && y < elementSizeOnSurface) {
@@ -109,8 +122,9 @@ public class GameEngine {
 		}
 	}
 
-	public void setAttributes(int elementSizeOnSurface, int width, int height) {
-		 this.elementSizeOnSurface = elementSizeOnSurface;
+	public void setAttributes(int elementSizeOnSurface, int smallTextSizeOnSurface, int width, int height) {
+		this.elementSizeOnSurface = elementSizeOnSurface;
+		this.smallTextSizeOnSurface = smallTextSizeOnSurface;
 		this.width = width;
 		this.height = height;
 		GameActivity.pacmanStep = elementSizeOnSurface / 8;

@@ -34,6 +34,35 @@ public class PacmanGLSurfaceView extends GLSurfaceView {
 		});
 		engineThread.start();
 	}
+	
+	public void setNewGameEngine(GameEngine gameEngine) {
+		this.gameEngine = gameEngine;
+		isAliveEngine = true;
+		engineThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (isAliveEngine) {
+					long currentTime = System.currentTimeMillis();
+					if (currentTime - lastTime > Constants.DELTA_TIME_UPDATE_ENGINE) {
+						PacmanGLSurfaceView.this.gameEngine.updateEngine();
+						lastTime = currentTime;
+					}
+				}
+
+			}
+		});
+		engineThread.start();
+		
+	}
+	
+	public void stopGameEngine() {
+		if (engineThread != null && engineThread.isAlive()) {
+			isAliveEngine = false;
+			engineThread.interrupt();
+			engineThread = null;
+		}
+	}
 
 	public PacmanGLSurfaceView(Context context, AttributeSet attrs) {
 		super(context, attrs);

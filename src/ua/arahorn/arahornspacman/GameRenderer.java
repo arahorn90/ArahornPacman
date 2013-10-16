@@ -34,6 +34,7 @@ public class GameRenderer implements Renderer {
 	private int enemyAtlasTexture[] = new int[1];
 	private Context mContext;
 	private int elementSizeOnSurface;
+	private int smallTextSizeOnSurface;
 	private int width;
 	private int height;
 	private GameEngine gameEngine;
@@ -107,43 +108,16 @@ public class GameRenderer implements Renderer {
 			elementSizeOnSurface = size.y / GameActivity.mapHeight;
 			height = size.y;
 			width = size.x;
+			smallTextSizeOnSurface = size.y / 10;
 
 		} else {
-			elementSizeOnSurface = display.getHeight();
+			elementSizeOnSurface = display.getHeight() / GameActivity.mapHeight;
 			height = display.getHeight();
 			width = display.getWidth();
-		}
+			smallTextSizeOnSurface = display.getHeight() / 10;
+		}		
 		if(isGameNew) {
-			Log.e("", "isGameNew");
-			
-			gameEngine.setSmallTextElement(new TextElement(mainAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS));
-			gameEngine.setBackgroundElement(new BackgroundElement(mainAtlasTexture, elementSizeOnSurface,
-					Constants.ELEMENT_SIZE_IN_ATLAS));
-			gameEngine.setWallElement(new WallElement(mainAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS));
-			gameEngine.setPacmanElement(new PacmanElement(mainAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS,
-					System.currentTimeMillis(), width, height));
-			gameEngine.setPacmanControl(new PacmanControl(Constants.CONTROL_SIZE, width - 100 - Constants.CONTROL_SIZE / 2,
-					100 - Constants.CONTROL_SIZE / 2));
-			gameEngine.setRedAlien(new RedAlien(enemyAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS, System
-					.currentTimeMillis(), width, height));
-	
-			gameEngine.setAttributes(elementSizeOnSurface, width, height);
-	
-			gameEngine.getPacmanElement().setPacmanPosition(new int[] { 1, 1 });
-			gameEngine.getPacmanElement().setPacmanSurfaceCoordinateX(
-					elementSizeOnSurface * (int) (gameEngine.getPacmanElement().getPacmanPosition()[1]));
-			gameEngine.getPacmanElement().setPacmanSurfaceCoordinateY(
-					height - elementSizeOnSurface * (gameEngine.getPacmanElement().getPacmanPosition()[0]));
-	
-			gameEngine.getPacmanControl().setRect(width - 100 - Constants.CONTROL_SIZE / 2, 100 - Constants.CONTROL_SIZE / 2,
-					width - 100 + Constants.CONTROL_SIZE / 2, 100 + Constants.CONTROL_SIZE / 2);
-	
-			gameEngine.getRedAlien().redAlienPosition = new int[] { 6, 10 };
-			gameEngine.getRedAlien().redAlienSurfaceCoordinate[1] = elementSizeOnSurface
-					* (int) (gameEngine.getRedAlien().redAlienPosition[1]);
-			gameEngine.getRedAlien().redAlienSurfaceCoordinate[0] = height - elementSizeOnSurface
-					* (gameEngine.getRedAlien().redAlienPosition[0]);
-			isGameNew = false;
+			gameNew(null);
 		}
 		gl.glEnable(GL11.GL_TEXTURE_2D);
 		gl.glShadeModel(GL11.GL_SMOOTH);
@@ -154,6 +128,41 @@ public class GameRenderer implements Renderer {
 
 		gl.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 
+	}
+	
+	public void gameNew(GameEngine gameEngine) {
+		if(gameEngine != null)
+			this.gameEngine = gameEngine;
+		Log.e("", "isGameNew");
+		
+		this.gameEngine.setSmallTextElement(new TextElement(mainAtlasTexture, smallTextSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS));
+		this.gameEngine.setBackgroundElement(new BackgroundElement(mainAtlasTexture, elementSizeOnSurface,
+				Constants.ELEMENT_SIZE_IN_ATLAS));
+		this.gameEngine.setWallElement(new WallElement(mainAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS));
+		this.gameEngine.setPacmanElement(new PacmanElement(mainAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS,
+				System.currentTimeMillis(), width, height));
+		this.gameEngine.setPacmanControl(new PacmanControl(Constants.CONTROL_SIZE, width - 100 - Constants.CONTROL_SIZE / 2,
+				100 - Constants.CONTROL_SIZE / 2));
+		this.gameEngine.setRedAlien(new RedAlien(enemyAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS, System
+				.currentTimeMillis(), width, height));
+
+		this.gameEngine.setAttributes(elementSizeOnSurface, smallTextSizeOnSurface, width, height);
+
+		this.gameEngine.getPacmanElement().setPacmanPosition(new int[] { 1, 1 });
+		this.gameEngine.getPacmanElement().setPacmanSurfaceCoordinateX(
+				elementSizeOnSurface * (int) (this.gameEngine.getPacmanElement().getPacmanPosition()[1]));
+		this.gameEngine.getPacmanElement().setPacmanSurfaceCoordinateY(
+				height - elementSizeOnSurface * (this.gameEngine.getPacmanElement().getPacmanPosition()[0]));
+
+		this.gameEngine.getPacmanControl().setRect(width - 100 - Constants.CONTROL_SIZE / 2, 100 - Constants.CONTROL_SIZE / 2,
+				width - 100 + Constants.CONTROL_SIZE / 2, 100 + Constants.CONTROL_SIZE / 2);
+
+		this.gameEngine.getRedAlien().setRedAlienPosition(new int[] { 6, 10 });
+		this.gameEngine.getRedAlien().setRedAlienSurfaceCoordinateX(
+				elementSizeOnSurface * (int) (this.gameEngine.getRedAlien().getRedAlienPosition()[1]));
+		this.gameEngine.getRedAlien().setRedAlienSurfaceCoordinateY(
+				height - elementSizeOnSurface * (this.gameEngine.getRedAlien().getRedAlienPosition()[0]));
+		isGameNew = false;
 	}
 
 	float angle;
@@ -186,11 +195,12 @@ public class GameRenderer implements Renderer {
 
 			gameEngine.getPacmanControl().draw(gl);
 			
-			drawText(gl, new StringBuilder(new String("pause").toUpperCase()), width - elementSizeOnSurface*5, height - elementSizeOnSurface, elementSizeOnSurface);
+			drawText(gl, new StringBuilder(new String("pause").toUpperCase()), width - smallTextSizeOnSurface*5, height - smallTextSizeOnSurface, smallTextSizeOnSurface);
 		}
 		if (GameActivity.gameState.equals(GameState.MENU_SCREEN)) {
-			drawText(gl, new StringBuilder(new String("resume").toUpperCase()), width / 2 - elementSizeOnSurface*3, height / 2, elementSizeOnSurface);
-			drawText(gl, new StringBuilder(new String("exit").toUpperCase()), width / 2 - elementSizeOnSurface*2, height / 2 - elementSizeOnSurface, elementSizeOnSurface);
+			drawText(gl, new StringBuilder(new String("resume").toUpperCase()), width / 2 - smallTextSizeOnSurface*3, height / 2, smallTextSizeOnSurface);
+			drawText(gl, new StringBuilder(new String("new game").toUpperCase()), width / 2 - smallTextSizeOnSurface*4, height / 2 - smallTextSizeOnSurface, smallTextSizeOnSurface);
+			drawText(gl, new StringBuilder(new String("exit").toUpperCase()), width / 2 - smallTextSizeOnSurface*2, height / 2 - smallTextSizeOnSurface * 2, smallTextSizeOnSurface);
 		}
 
 	}

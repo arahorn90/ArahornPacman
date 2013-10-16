@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import ua.arahorn.arahornspacman.view.PacmanGLSurfaceView;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,6 +22,7 @@ public class GameActivity extends Activity {
 
 	private PacmanGLSurfaceView glSurface;
 	private GameEngine gameEngine;
+	private GameRenderer gameRenderer;
 	
 	public static int[][] maskOfMapFile;
 	public static int mapWidth;
@@ -32,6 +34,38 @@ public class GameActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		loadMap();
+		
+		boolean isGameNew = false;
+		if(gameEngine == null) {
+			gameEngine = GameEngine.getInstanceEngine(this);
+			gameState = GameState.FIRST_SCREEN;
+			isGameNew = true;
+		}
+		gameRenderer = new GameRenderer(this, gameEngine, isGameNew);
+		glSurface = new PacmanGLSurfaceView(this, gameEngine);
+		glSurface.setRenderer(gameRenderer);
+
+		setContentView(glSurface);
+	}
+	
+	public void refreshGame() {
+		if(glSurface != null) {
+			glSurface.stopGameEngine();
+			loadMap();
+			
+			gameEngine = GameEngine.getInstanceEngine(this);
+			gameRenderer.gameNew(gameEngine);
+			gameState = GameState.FIRST_SCREEN;
+			glSurface.setNewGameEngine(gameEngine);
+		} else {
+			finish();
+			Log.e("", "finish()");
+		}
+	}
+	
+	private void loadMap() {
 		BufferedReader in = null;
 		try {
 			
@@ -71,16 +105,6 @@ public class GameActivity extends Activity {
 				e.printStackTrace();
 			}
 		}
-		boolean isGameNew = false;
-		if(gameEngine == null) {
-			gameEngine = GameEngine.getInstanceEngine(this);
-			gameState = GameState.FIRST_SCREEN;
-			isGameNew = true;
-		}
-		glSurface = new PacmanGLSurfaceView(this, gameEngine);
-		glSurface.setRenderer(new GameRenderer(this, gameEngine, isGameNew));
-
-		setContentView(glSurface);
 	}
 
 	@Override
@@ -108,6 +132,14 @@ public class GameActivity extends Activity {
 			gameEngine.stopMoving();
 		}
 		return super.onTouchEvent(event);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if(gameState !=gameState.MENU_SCREEN)
+			gameState = GameState.MENU_SCREEN;
+		else
+			super.onBackPressed();
 	}
 
 }

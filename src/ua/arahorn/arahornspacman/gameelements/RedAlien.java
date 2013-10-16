@@ -23,8 +23,8 @@ public class RedAlien extends BaseElement {
 	private int width;
 	private int height;
 
-	public int[] redAlienPosition;
-	public int[] redAlienSurfaceCoordinate = { 0, 0 };
+	private int[] redAlienPosition;
+	private int[] redAlienSurfaceCoordinate = { 0, 0 };
 
 	public RedAlien(int[] mTexture, int elementSize, int sizeInSurface, long startTime, int width, int height) {
 		super(mTexture, mTexture[Constants.TEXTURE_NUMBER_MAIN_ATLAS], elementSize, sizeInSurface);
@@ -243,6 +243,30 @@ public class RedAlien extends BaseElement {
 			break;
 		}
 		return false;
+	}
+
+	public int[] getRedAlienPosition() {
+		return redAlienPosition;
+	}
+
+	public void setRedAlienPosition(int[] redAlienPosition) {
+		this.redAlienPosition = redAlienPosition;
+	}
+
+	public int[] getRedAlienSurfaceCoordinate() {
+		return redAlienSurfaceCoordinate;
+	}
+
+	public void setRedAlienSurfaceCoordinate(int[] redAlienSurfaceCoordinate) {
+		this.redAlienSurfaceCoordinate = redAlienSurfaceCoordinate;
+	}
+	
+	public void setRedAlienSurfaceCoordinateX(int setRedAlienSurfaceCoordinateX) {
+		this.redAlienSurfaceCoordinate[1] = setRedAlienSurfaceCoordinateX;
+	}
+
+	public void setRedAlienSurfaceCoordinateY(int setRedAlienSurfaceCoordinateY) {
+		this.redAlienSurfaceCoordinate[0] = setRedAlienSurfaceCoordinateY;
 	}
 
 	public void setRotation(RedAlienRotation rotation) {

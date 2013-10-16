@@ -272,6 +272,10 @@ public class PacmanElement extends BaseElement {
 	public int[] getPacmanPosition() {
 		return pacmanPosition;
 	}
+	
+	public int [] getPacmanSurfaceCoordinate(){
+		return pacmanSurfaceCoordinate;
+	}
 
 	public void setPacmanSurfaceCoordinateX(int setPacmanSurfaceCoordinateX) {
 		this.pacmanSurfaceCoordinate[1] = setPacmanSurfaceCoordinateX;
