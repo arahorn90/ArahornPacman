@@ -10,55 +10,47 @@ import android.util.AttributeSet;
 
 public class PacmanGLSurfaceView extends GLSurfaceView {
 
-	private GameEngine gameEngine;
-	private long lastTime = 0;
-	private Thread engineThread;
-	private boolean isAliveEngine = true;
-
-	public PacmanGLSurfaceView(Context context, GameEngine gameEngine) {
-		super(context);
-		this.gameEngine = gameEngine;
-		engineThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (isAliveEngine) {
+	class StoppedThread extends Thread {
+		   private volatile boolean isAliveEngine = true;
+		   public void run() {
+			   while (isAliveEngine) {
 					long currentTime = System.currentTimeMillis();
 					if (currentTime - lastTime > Constants.DELTA_TIME_UPDATE_ENGINE) {
 						PacmanGLSurfaceView.this.gameEngine.updateEngine();
 						lastTime = currentTime;
 					}
 				}
+		   }
+		   public void requestStop() {
+			   isAliveEngine = false;
+		   }
+		   public void requestStart() {
+			   isAliveEngine = true;
+		   }
+		}
+	
+	private GameEngine gameEngine;
+	private long lastTime = 0;
+	private StoppedThread engineThread;
 
-			}
-		});
+	public PacmanGLSurfaceView(Context context, GameEngine gameEngine) {
+		super(context);
+		this.gameEngine = gameEngine;
+		engineThread = new StoppedThread();
 		engineThread.start();
 	}
 	
 	public void setNewGameEngine(GameEngine gameEngine) {
 		this.gameEngine = gameEngine;
-		isAliveEngine = true;
-		engineThread = new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				while (isAliveEngine) {
-					long currentTime = System.currentTimeMillis();
-					if (currentTime - lastTime > Constants.DELTA_TIME_UPDATE_ENGINE) {
-						PacmanGLSurfaceView.this.gameEngine.updateEngine();
-						lastTime = currentTime;
-					}
-				}
-
-			}
-		});
+		engineThread = new StoppedThread();
 		engineThread.start();
 		
 	}
 	
 	public void stopGameEngine() {
 		if (engineThread != null && engineThread.isAlive()) {
-			isAliveEngine = false;
+			engineThread.requestStop();
 			engineThread.interrupt();
 			engineThread = null;
 		}
@@ -87,7 +79,8 @@ public class PacmanGLSurfaceView extends GLSurfaceView {
 	@Override
 	public void onPause() {
 		if (engineThread != null && engineThread.isAlive()) {
-			GameActivity.gameState = GameState.MENU_SCREEN;
+			if(!GameActivity.gameState.equals(GameState.MENU_SCREEN) && !GameActivity.gameState.equals(GameState.GAME_START))
+				GameActivity.gameState = GameState.MENU_SCREEN;
 		}
 		super.onPause();
 	}
@@ -95,7 +88,7 @@ public class PacmanGLSurfaceView extends GLSurfaceView {
 	@Override
 	protected void onDetachedFromWindow() {
 		if (engineThread != null && engineThread.isAlive()) {
-			isAliveEngine = false;
+			engineThread.requestStop();
 			engineThread.interrupt();
 			engineThread = null;
 		}

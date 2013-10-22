@@ -9,7 +9,6 @@ import javax.microedition.khronos.opengles.GL11;
 
 import ua.arahorn.arahornspacman.GameActivity.GameState;
 import ua.arahorn.arahornspacman.gameelements.BackgroundElement;
-import ua.arahorn.arahornspacman.gameelements.PacmanControl;
 import ua.arahorn.arahornspacman.gameelements.PacmanElement;
 import ua.arahorn.arahornspacman.gameelements.RedAlien;
 import ua.arahorn.arahornspacman.gameelements.TextElement;
@@ -23,7 +22,6 @@ import android.graphics.Point;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
 import android.os.Build;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -133,7 +131,6 @@ public class GameRenderer implements Renderer {
 	public void gameNew(GameEngine gameEngine) {
 		if(gameEngine != null)
 			this.gameEngine = gameEngine;
-		Log.e("", "isGameNew");
 		
 		this.gameEngine.setSmallTextElement(new TextElement(mainAtlasTexture, smallTextSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS));
 		this.gameEngine.setBackgroundElement(new BackgroundElement(mainAtlasTexture, elementSizeOnSurface,
@@ -141,23 +138,23 @@ public class GameRenderer implements Renderer {
 		this.gameEngine.setWallElement(new WallElement(mainAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS));
 		this.gameEngine.setPacmanElement(new PacmanElement(mainAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS,
 				System.currentTimeMillis(), width, height));
-		this.gameEngine.setPacmanControl(new PacmanControl(Constants.CONTROL_SIZE, width - 100 - Constants.CONTROL_SIZE / 2,
-				100 - Constants.CONTROL_SIZE / 2));
+//		this.gameEngine.setPacmanControl(new PacmanControl(Constants.CONTROL_SIZE, width - 100 - Constants.CONTROL_SIZE / 2,
+//				100 - Constants.CONTROL_SIZE / 2));
 		this.gameEngine.setRedAlien(new RedAlien(enemyAtlasTexture, elementSizeOnSurface, Constants.ELEMENT_SIZE_IN_ATLAS, System
 				.currentTimeMillis(), width, height));
 
 		this.gameEngine.setAttributes(elementSizeOnSurface, smallTextSizeOnSurface, width, height);
 
-		this.gameEngine.getPacmanElement().setPacmanPosition(new int[] { 1, 1 });
+		this.gameEngine.getPacmanElement().setPacmanPosition(GameActivity.pacmanStartPosition);
 		this.gameEngine.getPacmanElement().setPacmanSurfaceCoordinateX(
 				elementSizeOnSurface * (int) (this.gameEngine.getPacmanElement().getPacmanPosition()[1]));
 		this.gameEngine.getPacmanElement().setPacmanSurfaceCoordinateY(
 				height - elementSizeOnSurface * (this.gameEngine.getPacmanElement().getPacmanPosition()[0]));
 
-		this.gameEngine.getPacmanControl().setRect(width - 100 - Constants.CONTROL_SIZE / 2, 100 - Constants.CONTROL_SIZE / 2,
-				width - 100 + Constants.CONTROL_SIZE / 2, 100 + Constants.CONTROL_SIZE / 2);
+//		this.gameEngine.getPacmanControl().setRect(width - 100 - Constants.CONTROL_SIZE / 2, 100 - Constants.CONTROL_SIZE / 2,
+//				width - 100 + Constants.CONTROL_SIZE / 2, 100 + Constants.CONTROL_SIZE / 2);
 
-		this.gameEngine.getRedAlien().setRedAlienPosition(new int[] { 6, 10 });
+		this.gameEngine.getRedAlien().setRedAlienPosition(GameActivity.redAlienStartPosition);
 		this.gameEngine.getRedAlien().setRedAlienSurfaceCoordinateX(
 				elementSizeOnSurface * (int) (this.gameEngine.getRedAlien().getRedAlienPosition()[1]));
 		this.gameEngine.getRedAlien().setRedAlienSurfaceCoordinateY(
@@ -193,12 +190,13 @@ public class GameRenderer implements Renderer {
 
 			gameEngine.getRedAlien().draw(gl, Constants.ELEMENT_RED_ALIEN_NUMBER);
 
-			gameEngine.getPacmanControl().draw(gl);
+//			gameEngine.getPacmanControl().draw(gl);
 			
 			drawText(gl, new StringBuilder(new String("pause").toUpperCase()), width - smallTextSizeOnSurface*5, height - smallTextSizeOnSurface, smallTextSizeOnSurface);
 		}
-		if (GameActivity.gameState.equals(GameState.MENU_SCREEN)) {
-			drawText(gl, new StringBuilder(new String("resume").toUpperCase()), width / 2 - smallTextSizeOnSurface*3, height / 2, smallTextSizeOnSurface);
+		if (GameActivity.gameState.equals(GameState.MENU_SCREEN) || GameActivity.gameState.equals(GameState.GAME_START)) {
+			if(GameActivity.gameState.equals(GameState.MENU_SCREEN))
+				drawText(gl, new StringBuilder(new String("resume").toUpperCase()), width / 2 - smallTextSizeOnSurface*3, height / 2, smallTextSizeOnSurface);
 			drawText(gl, new StringBuilder(new String("new game").toUpperCase()), width / 2 - smallTextSizeOnSurface*4, height / 2 - smallTextSizeOnSurface, smallTextSizeOnSurface);
 			drawText(gl, new StringBuilder(new String("exit").toUpperCase()), width / 2 - smallTextSizeOnSurface*2, height / 2 - smallTextSizeOnSurface * 2, smallTextSizeOnSurface);
 		}

@@ -204,23 +204,23 @@ public class PacmanElement extends BaseElement {
 			return;
 		}
 
-		float offsetX = controlX - (width - 100 - Constants.CONTROL_SIZE / 2);
-		float offsetY = controlY - (100 - Constants.CONTROL_SIZE / 2);
-		if (Math.abs(offsetX) > Math.abs(offsetY)) {
-			if (offsetX > 0) {
+//		float offsetX = controlX - (width - 100 - Constants.CONTROL_SIZE / 2);
+//		float offsetY = controlY - (100 - Constants.CONTROL_SIZE / 2);
+		if (Math.abs(controlX) > Math.abs(controlY)) {
+			if (controlX > 0.0f) {
 				setRotation(PacmanRotation.RIGHT);
 				setMove(PacmanMove.MOVE);
-			} else if (offsetX < 0) {
+			} else if (controlX < 0.0f) {
 				setRotation(PacmanRotation.LEFT);
 				setMove(PacmanMove.MOVE);
 			} else {
 				setMove(PacmanMove.STOP);
 			}
 		} else {
-			if (offsetY > 0) {
+			if (controlY > 0.0f) {
 				setRotation(PacmanRotation.TOP);
 				setMove(PacmanMove.MOVE);
-			} else if (offsetY < 0) {
+			} else if (controlY < 0.0f) {
 				setRotation(PacmanRotation.BOTTOM);
 				setMove(PacmanMove.MOVE);
 			} else {

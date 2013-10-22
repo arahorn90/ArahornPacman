@@ -2,6 +2,9 @@ package ua.arahorn.arahornspacman.gameelements;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.pm.LabeledIntent;
+import android.util.Log;
+
 import ua.arahorn.arahornspacman.GameActivity;
 import ua.arahorn.arahornspacman.utils.Constants;
 import ua.arahorn.arahornspacman.utils.PathFinder;
@@ -18,16 +21,20 @@ public class RedAlien extends BaseElement {
 	}
 
 	private long startTime = 0;
+	private long deltaStopTimer = 0;
+	private long startStopTimer = 0;
 	private RedAlienRotation rotation = RedAlienRotation.LEFT;
 	private RedAlienMove move = RedAlienMove.STOP;
 	private int width;
 	private int height;
+	private PathFinder pathFinder;
 
 	private int[] redAlienPosition;
 	private int[] redAlienSurfaceCoordinate = { 0, 0 };
 
 	public RedAlien(int[] mTexture, int elementSize, int sizeInSurface, long startTime, int width, int height) {
 		super(mTexture, mTexture[Constants.TEXTURE_NUMBER_MAIN_ATLAS], elementSize, sizeInSurface);
+		pathFinder = new PathFinder(GameActivity.maskOfMapFile);
 		this.startTime = startTime;
 		this.width = width;
 		this.height = height;
@@ -181,14 +188,17 @@ public class RedAlien extends BaseElement {
 		if (isMovingRedAlien()) {
 			return;
 		}
-		PathFinder pathFinder = new PathFinder(GameActivity.maskOfMapFile);
-
+		if(System.currentTimeMillis() - startTime - deltaStopTimer > 10000 && System.currentTimeMillis() - startTime - deltaStopTimer < 11000) {
+			pathFinder.setOpen(true);
+		} else {
+			pathFinder.setOpen(false);
+		}
 		Point start = pathFinder.new Point(redAlienPosition[1], redAlienPosition[0]);
 
 		Point end = pathFinder.new Point(pacmanPositionX, pacmanPostionY);
 
 		Point[] path = pathFinder.find(start, end);
-		if (path.length > 1) {
+		if (path != null && path.length > 1) {
 			if (path[1].getX() != path[0].getX()) {
 				if (path[1].getX() > path[0].getX()) {
 					setRotation(RedAlienRotation.RIGHT);
@@ -243,6 +253,19 @@ public class RedAlien extends BaseElement {
 			break;
 		}
 		return false;
+	}
+	
+	public void startTimer() {
+		if(startStopTimer != 0) {
+			deltaStopTimer += System.currentTimeMillis() - startStopTimer;
+			startStopTimer = 0;
+		}
+	}
+	
+	public void stopTimer() {
+		if(startStopTimer == 0) {
+			startStopTimer = System.currentTimeMillis();
+		}
 	}
 
 	public int[] getRedAlienPosition() {

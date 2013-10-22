@@ -52,9 +52,17 @@ public class PathFinder {
 
 	public PathFinder(int[][] labyrinth) {
 
-		this.labyrinth = labyrinth;
+		this.labyrinth = labyrinth.clone();
 		fillmap = new int[GameActivity.mapHeight][GameActivity.mapWidth];
 
+	}
+	
+	public void setOpen(boolean isOpen){
+		if(isOpen) {
+			labyrinth[7][9] = 1;
+		} else {
+			labyrinth[7][9] = 0;
+		}
 	}
 
 	void push(Point p, int n) {
